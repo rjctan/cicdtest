@@ -1,0 +1,40 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'AWS CloudFormation template Root Stack'
+Parameters:
+  StackEnvironment:
+    Type: String
+    Description: Sort of AWS AMX environment
+# IAM parameters
+  EKSRoleName:
+    Type: String
+    Description: EKS role name
+  FargateExecutionRoleName:
+    Type: String
+    Description: Fargate role name
+# Security Group parameters
+  EKSSecurityGroupName:
+    Type: String
+    Description: Security Group resource
+
+Resources:        
+  IamStack:
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      TemplateURL: !Sub "https://amx-ppl-cc-des-s3-managed-stacks.s3.amazonaws.com/AMX-PPL-CC-CF-IAM-NESTED-STACK-CF-${StackEnvironment}.yaml"
+      Parameters:
+        EKSRoleName: !Ref EKSRoleName
+        FargateExecutionRoleName: !Ref FargateExecutionRoleName
+
+  SecurityGroupStack:
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      TemplateURL: !Sub "https://amx-ppl-cc-des-s3-managed-stacks.s3.amazonaws.com/AMX-PPL-CC-CF-SG-NESTED-STACK-CF-${StackEnvironment}.yaml"
+      Parameters:
+        EKSSecurityGroupName: !Ref EKSSecurityGroupName
+
+#  ComputeGroupStack:
+#    Type: 'AWS::CloudFormation::Stack'
+#    Properties:
+#      TemplateURL: !Sub "https://amx-ppl-cc-des-s3-managed-stacks.s3.amazonaws.com/AMX-PPL-CC-CF-COMPUTE-NESTED-STACK-CF-${StackEnvironment}.yaml"
+#      Parameters:
+#        EC2SG: !GetAtt SecurityGroupStack.Outputs.SecurityGroupId

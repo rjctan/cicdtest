@@ -1,0 +1,22 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'AWS CloudFormation template Security Groups Nested Stack'
+Parameters:
+  EKSSecurityGroupName:
+    Type: String
+
+Resources: 
+  EKSSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Ref EKSSecurityGroupName
+      GroupDescription: 'Enable EKS access on the inbound port'
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 0
+          ToPort: 1024
+          CidrIp: 0.0.0.0/0
+
+Outputs:
+  SecurityGroupId:
+    Description: 'EKS Security Group'
+    Value: !GetAtt EKSSecurityGroup.GroupId
