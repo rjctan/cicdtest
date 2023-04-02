@@ -13,7 +13,7 @@ Resources:
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 0
-          ToPort: 1025
+          ToPort: 1024
           CidrIp: 0.0.0.0/0
 
 Outputs:
