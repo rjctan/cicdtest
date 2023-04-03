@@ -10,6 +10,7 @@ Resources:
     Properties:
       GroupName: !Ref EKSSecurityGroupName
       GroupDescription: 'Enable EKS access on the inbound port'
+      VpcId: 'vpc-01246711a9d4db1c8'
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 0
