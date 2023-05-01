@@ -22,12 +22,11 @@ pipeline {
                 ])
             }
         }
-        stage("git clone code terraform") {
+        stage("terraform") {
             steps {
                 sh '''
                   echo "hola"
-                  ''''
-                )
+                  '''
             }
         }
     }
