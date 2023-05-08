@@ -20,7 +20,7 @@ Resources:
   IamStack:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
-      TemplateURL: !Sub "https://amx-ppl-cc-des-s3-managed-stacks.s3.amazonaws.com/AMX-PPL-CC-CF-IAM-NESTED-STACK-CF-${StackEnvironment}.yaml"
+      TemplateURL: !Sub "https://amx-pab-cc-des-s3-managed-stacks.s3.amazonaws.com/AMX-PAB-CC-CF-IAM-NESTED-STACK-CF-${StackEnvironment}.yaml"
       Parameters:
         EKSRoleName: !Ref EKSRoleName
         FargateExecutionRoleName: !Ref FargateExecutionRoleName
@@ -28,7 +28,7 @@ Resources:
   SecurityGroupStack:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
-      TemplateURL: !Sub "https://amx-ppl-cc-des-s3-managed-stacks.s3.amazonaws.com/AMX-PPL-CC-CF-SG-NESTED-STACK-CF-${StackEnvironment}.yaml"
+      TemplateURL: !Sub "https://amx-pab-cc-des-s3-managed-stacks.s3.amazonaws.com/AMX-PAB-CC-CF-SG-NESTED-STACK-CF-${StackEnvironment}.yaml"
       Parameters:
         EKSSecurityGroupName: !Ref EKSSecurityGroupName
 
