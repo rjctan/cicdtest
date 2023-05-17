@@ -5,9 +5,8 @@ phases:
     commands:
       - echo "Validating CFN templates"
       - |
-        aws cloudformation validate-template --template-body file://AMX-CA-CC-CF-ROOT-STACK.yaml
-        cd templates
-        for cfn_template in AMX-CA-CC-DES-CF-*-NESTED-STACK.yaml; do
+        aws cloudformation validate-template --template-body file://AMX-CA-CF-ROOT-STACK.yaml
+        for cfn_template in AMX-CF-CA-*.yaml; do
           echo "Validating CloudFormation template file $cfn_template"
           aws cloudformation validate-template --template-body file://$cfn_template
         done
