@@ -17,7 +17,7 @@ Resources:
       ImageId: ami-0b5eea76982371e91
       SecurityGroupIds:
         - !Ref EC2SG
-      SubnetId: subnet-056fc8edccf8da53d
+      SubnetId: subnet-01ad7291af69ab2e2
 
 Outputs:
   EC2Resource:
