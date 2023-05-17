@@ -17,7 +17,7 @@ Resources:
   IamStack:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
-      TemplateURL: !Sub "https://amx-ca-cc-de-s3-managed-stacks.s3.amazonaws.com/AMX-CF-CA-IAM.yaml"
+      TemplateURL: !Sub "https://amx-ca-de-s3-managed-stacks.s3.amazonaws.com/AMX-CF-CA-IAM.yaml"
       Parameters:
         EKSRoleName: !Ref EKSRoleName
         FargateExecutionRoleName: !Ref FargateExecutionRoleName
@@ -25,7 +25,7 @@ Resources:
   SecurityGroupStack:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
-      TemplateURL: !Sub "https://amx-ca-cc-de-s3-managed-stacks.s3.amazonaws.com/AMX-CF-CA-SG.yaml"
+      TemplateURL: !Sub "https://amx-ca-de-s3-managed-stacks.s3.amazonaws.com/AMX-CF-CA-SG.yaml"
       Parameters:
         EKSSecurityGroupName: !Ref EKSSecurityGroupName
 
