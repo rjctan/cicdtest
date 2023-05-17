@@ -1,9 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: 'AWS CloudFormation template Root Stack'
 Parameters:
-  StackEnvironment:
-    Type: String
-    Description: Sort of AWS AMX environment
 # IAM parameters
   EKSRoleName:
     Type: String
@@ -20,7 +17,7 @@ Resources:
   IamStack:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
-      TemplateURL: !Sub "https://amx-ca-cc-des-s3-managed-stacks.s3.amazonaws.com/AMX-CA-CC-${StackEnvironment}-CF-IAM-NESTED-STACK.yaml"
+      TemplateURL: !Sub "https://amx-ca-cc-de-s3-managed-stacks.s3.amazonaws.com/AMX-CF-CA-IAM.yaml"
       Parameters:
         EKSRoleName: !Ref EKSRoleName
         FargateExecutionRoleName: !Ref FargateExecutionRoleName
@@ -28,7 +25,7 @@ Resources:
   SecurityGroupStack:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
-      TemplateURL: !Sub "https://amx-ca-cc-des-s3-managed-stacks.s3.amazonaws.com/AMX-CA-CC-${StackEnvironment}-CF-SG-NESTED-STACK.yaml"
+      TemplateURL: !Sub "https://amx-ca-cc-de-s3-managed-stacks.s3.amazonaws.com/AMX-CF-CA-SG.yaml"
       Parameters:
         EKSSecurityGroupName: !Ref EKSSecurityGroupName
 
