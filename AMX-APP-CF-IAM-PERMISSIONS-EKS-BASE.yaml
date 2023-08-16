@@ -126,6 +126,10 @@ Resources:
 
   EksIamRole:
     Type: AWS::IAM::Role
+    DependsOn: 
+      - CloudWatchWriteAccess
+      - S3ReadWriteAccess
+      - SsmKmsReadAccess
     Properties:
       RoleName: !Sub '${AppPrefix}-${StackEnvironment}-${EksRoleName}'
       AssumeRolePolicyDocument:
