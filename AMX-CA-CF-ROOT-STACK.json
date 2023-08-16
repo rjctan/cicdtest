@@ -1,7 +1,0 @@
-{
-  "Parameters" : {
-    "EKSRoleName" : "eks-role-name",
-    "FargateExecutionRoleName" : "fargate-role-name",
-    "EKSSecurityGroupName" : "sgeksconnection"
-  }
-}
