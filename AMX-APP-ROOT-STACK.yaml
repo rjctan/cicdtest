@@ -127,7 +127,7 @@ Resources:
   IamBaseStack:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
-      TemplateURL: !Sub "https://amx-ca-de-s3-managed-stacks.s3.amazonaws.com/AMX-CF-CA-IAM.yaml"
+      TemplateURL: !Sub "https://${BucketStacks}.s3.amazonaws.com/AMX-APP-CF-IAM-PERMISSIONS-EKS-BASE.yaml"
       Parameters:
         StackEnvironment: !Ref StackEnvironment
         AppPrefix: !Ref AppPrefix
@@ -144,7 +144,7 @@ Resources:
   EksClusterStack:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
-      TemplateURL: !Sub "https://amx-ca-de-s3-managed-stacks.s3.amazonaws.com/AMX-CF-CA-SG.yaml"
+      TemplateURL: !Sub "https://${BucketStacks}.s3.amazonaws.com/AMX-APP-CF-EKS.yaml"
       Parameters:
         StackEnvironment: !Ref StackEnvironment
         AppPrefix: !Ref AppPrefix
@@ -171,7 +171,7 @@ Resources:
   IamServiceAccountsStack:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
-      TemplateURL: !Sub "https://amx-ca-de-s3-managed-stacks.s3.amazonaws.com/AMX-CF-CA-SG.yaml"
+      TemplateURL: !Sub "https://${BucketStacks}.s3.amazonaws.com/AMX-APP-CF-IAM-PERMISSIONS-SERVICE-ACCOUNTS.yaml"
       Parameters:
         StackEnvironment: !Ref StackEnvironment
         AppPrefix: !Ref AppPrefix

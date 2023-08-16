@@ -1,6 +1,6 @@
 {
   "Parameters" : {
-    "BucketStacks": "demo-amx-iac-eks",
+    "BucketStacks": "amx-app-de-managed-stack",
     "StackEnvironment": "DE",
     "AppPrefix": "AMX-APP",
     "EksRoleName": "EKS-PERMISSIONS",
