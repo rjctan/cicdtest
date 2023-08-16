@@ -1,0 +1,187 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'AWS CloudFormation template Root Stack'
+
+Parameters:
+
+  BucketStacks:
+    Type: String
+    Description: 'Nombre del bucket donde se alojan las plantillas de CF'
+    Default: ''
+
+  StackEnvironment:
+    Type: String
+    Description: 'Clave del ambiente donde se esta haciendo el despliegue en mayusculas (DE, Q, PD)'
+    AllowedValues:
+      - "PD"
+      - "Q"
+      - "DE"
+
+  AppPrefix:
+    Type: String
+    Description: 'Prefijo del aplicativo de acuerdo a la nomenclatura de AMX en letras mayusculas (ej. AMX-APP)'
+    Default: ''
+
+  EksRoleName:
+    Type: String
+    Description: 'Sufijo de rol de EKS de acuerdo a la nomenclatura de AMX en letras mayusculas (ej. EKS-PERMISSIONS)'
+    Default: ''
+
+  FargateExecutionRoleName:
+    Type: String
+    Description: 'Sufijo de rol de Fargate de acuerdo a la nomenclatura de AMX en letras mayusculas (ej. FARGATE-PERMISSIONS)'
+    Default: ''
+
+  EKSClusterName:
+    Type: String
+    Description: Name of EKS Cluster
+    Default: ''
+
+  EKSClusterVersion:
+    Type: String
+    Description: Version of EKS Cluster
+    Default: ''
+
+  EksCmk:
+    Type: String
+    Description: ARN EKS CMK Key
+    Default: ''
+
+  CmkCloudWatchLogGroupKey:
+    Type: String
+    Description: ARN KMS Key for CloudWatch Log Group
+    Default: ''
+
+  EksVpcId:
+    Type: String
+    Description: VPC Id for EKS Cluster
+    Default: ''
+
+  VpcCidr:
+    Type: String
+    Description: VPC Cidr
+    Default: ''
+
+  ControlPlaneCidr:
+    Type: String
+    Description: Control Plane Cidr
+    Default: ''
+
+  PrivateSubnetIds:
+    Type: List<AWS::EC2::Subnet::Id>
+    Description: Define the Private Subnet IDs
+    Default: ''
+ 
+  FargateAppNamespace:
+    Type: String
+    Description: Namespace of App
+    Default: ''
+
+  EksFargateProfileName:
+    Type: String
+    Description: Namespace of Fargate Profile
+    Default: ''
+
+  AwsLoadBalancerIamRole:
+    Type: String
+    Description: 'Sufijo de rol de de AWS Load Balancer Controller Service Account de acuerdo a la nomenclatura de AMX en letras mayusculas (ej. AWS-LOAD-BALANCER-CONTROLLER)'
+    Default: ''
+
+  AwsCloudwatchIamPolicy:
+    Type: String
+    Description: 'Sufijo de politica de de Cloudwatch Service Account de acuerdo a la nomenclatura de AMX en letras mayusculas (ej. EKS-FARGATE-LOGGING)'
+    Default: ''
+  
+  # Tags
+  AreaResponsable:
+    Type: String
+    Description: Area responsable
+    Default: ''
+
+  CentroDeCosto:
+    Type: String
+    Description: Centro de Costos asociados a TI
+    Default: ""
+
+  DuenoDeLaCuenta:
+    Type: String
+    Description: Lista de distribucion asociada
+    Default: ""
+
+  Proyecto:
+    Type: String
+    Description: Nombre oficial de OU padre
+    Default: ""
+
+  Aplicacion:
+    Type: String
+    Description: Nombre de aplicacion oficial
+    Default: ""
+
+  ImpactoANegocio:
+    Type: String
+    Description: Impacto de negocio
+    Default: ""
+  
+Resources:
+
+  IamBaseStack:
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      TemplateURL: !Sub "https://amx-ca-de-s3-managed-stacks.s3.amazonaws.com/AMX-CF-CA-IAM.yaml"
+      Parameters:
+        StackEnvironment: !Ref StackEnvironment
+        AppPrefix: !Ref AppPrefix
+        EksRoleName: !Ref EksRoleName
+        FargateExecutionRoleName: !Ref FargateExecutionRoleName
+        AreaResponsable: !Ref AreaResponsable
+        CentroDeCosto: !Ref CentroDeCosto
+        DuenoDeLaCuenta: !Ref DuenoDeLaCuenta
+        Proyecto: !Ref Proyecto
+        Aplicacion: !Ref Aplicacion
+        ImpactoANegocio: !Ref ImpactoANegocio
+
+
+  EksClusterStack:
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      TemplateURL: !Sub "https://amx-ca-de-s3-managed-stacks.s3.amazonaws.com/AMX-CF-CA-SG.yaml"
+      Parameters:
+        StackEnvironment: !Ref StackEnvironment
+        AppPrefix: !Ref AppPrefix
+        EKSClusterName: !Ref EKSClusterName
+        EKSClusterVersion: !Ref EKSClusterVersion
+        EksCmk: !Ref EksCmk
+        CmkCloudWatchLogGroupKey: !Ref CmkCloudWatchLogGroupKey
+        EksVpcId: !Ref EksVpcId
+        VpcCidr: !Ref VpcCidr
+        ControlPlaneCidr: !Ref ControlPlaneCidr
+        PrivateSubnetIds: !Ref PrivateSubnetIds
+        ControlPlaneIamRole: !GetAtt IamBaseStack.Outputs.AmxEksIamRoleArn
+        FargateProfileIamRole: !GetAtt IamBaseStack.Outputs.AmxFargateIamRoleArn
+        FargateAppNamespace: !Ref FargateAppNamespace
+        EksFargateProfileName: !Ref EksFargateProfileName
+        AreaResponsable: !Ref AreaResponsable
+        CentroDeCosto: !Ref CentroDeCosto
+        DuenoDeLaCuenta: !Ref DuenoDeLaCuenta
+        Proyecto: !Ref Proyecto
+        Aplicacion: !Ref Aplicacion
+        ImpactoANegocio: !Ref ImpactoANegocio
+
+
+  IamServiceAccountsStack:
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      TemplateURL: !Sub "https://amx-ca-de-s3-managed-stacks.s3.amazonaws.com/AMX-CF-CA-SG.yaml"
+      Parameters:
+        StackEnvironment: !Ref StackEnvironment
+        AppPrefix: !Ref AppPrefix
+        ClusterOIDCURL: !GetAtt   EksClusterStack.Outputs.AmxControlPlaneOpenIdConnectIssuerUrl
+        AwsLoadBalancerIamRole: !Ref AwsLoadBalancerIamRole
+        FargateIamRole: !GetAtt IamBaseStack.Outputs.AmxFargateIamRoleArn
+        AwsCloudwatchIamPolicy: !Ref AwsCloudwatchIamPolicy
+        AreaResponsable: !Ref AreaResponsable
+        CentroDeCosto: !Ref CentroDeCosto
+        DuenoDeLaCuenta: !Ref DuenoDeLaCuenta
+        Proyecto: !Ref Proyecto
+        Aplicacion: !Ref Aplicacion
+        ImpactoANegocio: !Ref ImpactoANegocio

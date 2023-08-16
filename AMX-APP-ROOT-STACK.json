@@ -1,0 +1,27 @@
+{
+  "Parameters" : {
+    "BucketStacks": "demo-amx-iac-eks",
+    "StackEnvironment": "DE",
+    "AppPrefix": "AMX-APP",
+    "EksRoleName": "EKS-PERMISSIONS",
+    "FargateExecutionRoleName": "FARGATE-PERMISSIONS",
+    "EKSClusterName": "TEST",
+    "EKSClusterVersion": "1.27",
+    "EksCmk": "arn:aws:kms:us-east-1:766819176966:key/5f54985b-bfb0-47d9-9289-006ffa145b08",
+    "CmkCloudWatchLogGroupKey": "arn:aws:kms:us-east-1:766819176966:key/5f54985b-bfb0-47d9-9289-006ffa145b08",
+    "EksVpcId": "vpc-0c9d013543a933d4a",
+    "VpcCidr": "172.41.0.0/16",
+    "ControlPlaneCidr": "10.110.0.0/16",
+    "PrivateSubnetIds": "subnet-07cd59026aeac712c, subnet-0bd033e4eb60eef9d",
+    "FargateAppNamespace": "amx-app-demo",
+    "EksFargateProfileName": "amx-app-demo",
+    "AwsLoadBalancerIamRole": "AWS-LOAD-BALANCER-CONTROLLER",
+    "AwsCloudwatchIamPolicy": "EKS-FARGATE-LOGGING",
+    "AreaResponsable": "Operaciones",
+    "CentroDeCosto": "120101",
+    "DuenoDeLaCuenta": "usuario@aeromexico.com",
+    "Proyecto": "OPS",
+    "Aplicacion": "APP_DEMO",
+    "ImpactoANegocio": "Tier0"
+  }
+}
