@@ -1,0 +1,276 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'AWS CloudFormation template EKS Nested Stack'
+
+Parameters:
+
+  StackEnvironment:
+    Type: String
+    Description: 'Clave del ambiente donde se esta haciendo el despliegue en mayusculas (DE, Q, PD)'
+    AllowedValues:
+      - "PD"
+      - "Q"
+      - "DE"
+
+  AppPrefix:
+    Type: String
+    Description: 'Prefijo del aplicativo de acuerdo a la nomenclatura de AMX en letras mayusculas (ej. AMX-APP)'
+    Default: 'AMX-APP'
+
+  EKSClusterName:
+    Type: String
+    Description: Name of EKS Cluster
+    Default: ''
+
+  EKSClusterVersion:
+    Type: String
+    Description: Version of EKS Cluster
+    Default: ''
+
+  EksCmk:
+    Type: String
+    Description: ARN EKS CMK Key
+    Default: ''
+
+  CmkCloudWatchLogGroupKey:
+    Type: String
+    Description: ARN KMS Key for CloudWatch Log Group
+    Default: ''
+
+  ControlPlaneIamRole:
+    Type: String
+    Description: EKS Control Plane IAM role
+    Default: ''
+
+  EksVpcId:
+    Type: String
+    Description: VPC Id for EKS Cluster
+    Default: ''
+
+  VpcCidr:
+    Type: String
+    Description: VPC Cidr
+    Default: ''
+
+  ControlPlaneCidr:
+    Type: String
+    Description: Control Plane Cidr
+    Default: ''
+
+  PrivateSubnetIds:
+    Type: List<AWS::EC2::Subnet::Id>
+    Description: Define the Private Subnet IDs
+    Default: ''
+
+  FargateProfileIamRole:
+    Type: String
+    Description: Fargate IAM Role
+    Default: ''
+
+  FargateAppNamespace:
+    Type: String
+    Description: Namespace of App
+    Default: ''
+
+  EksFargateProfileName:
+    Type: String
+    Description: Namespace of Fargate Profile
+    Default: ''
+  
+  # Tags
+  AreaResponsable:
+    Type: String
+    Description: Area responsable
+    Default: Operaciones
+    AllowedValues:
+      - "SolucionesCorporativas"
+      - "Comercial"
+      - "Operaciones"
+      - "CXLYL"
+      - "Infraestrcutura"
+      - "Seguridad"
+      - "BI"
+
+  CentroDeCosto:
+    Type: String
+    Description: Centro de Costos asociados a TI
+    Default: ""
+
+  DuenoDeLaCuenta:
+    Type: String
+    Description: Lista de distribucion asociada
+    Default: ""
+
+  Proyecto:
+    Type: String
+    Description: Nombre oficial de OU padre
+    Default: ""
+
+  Aplicacion:
+    Type: String
+    Description: Nombre de aplicacion oficial
+    Default: ""
+
+  ImpactoANegocio:
+    Type: String
+    Description: Impacto de negocio
+    Default: ""
+    AllowedValues:
+      - "Tier0"
+      - "Tier1"
+      - "Tier2"
+      - "Tier3"
+      - "Tier4"
+
+Resources:
+  ControlPlaneSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group for Control Plane
+      VpcId: !Ref EksVpcId
+
+      Tags:
+        - Key: Ambiente
+          Value: !Ref StackEnvironment
+        - Key: AreaResponsable
+          Value: !Ref AreaResponsable
+        - Key: CentroDeCosto
+          Value: !Ref CentroDeCosto
+        - Key: DuenoDeLaCuenta
+          Value: !Ref DuenoDeLaCuenta
+        - Key: Proyecto
+          Value: !Ref Proyecto
+        - Key: Aplicacion
+          Value: !Ref Aplicacion
+        - Key: ImpactoANegocio
+          Value: !Ref ImpactoANegocio
+  
+  ControlPlaneSecurityGroupIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    DependsOn:
+      - ControlPlaneSecurityGroup
+    Properties:
+      GroupId: !Ref ControlPlaneSecurityGroup
+      IpProtocol: tcp
+      FromPort: 443
+      ToPort: 443
+      CidrIp: !Ref VpcCidr
+
+  ControlPlaneSecurityEgressGroup:
+    Type: AWS::EC2::SecurityGroupEgress
+    DependsOn:
+      - ControlPlaneSecurityGroup
+    Properties:
+      GroupId: !Ref ControlPlaneSecurityGroup
+      CidrIp: !Ref VpcCidr
+      FromPort: 10250
+      ToPort: 65535
+      IpProtocol: tcp
+
+  EksCluster:
+    Type: AWS::EKS::Cluster
+    Properties:
+      Name: !Sub '${AppPrefix}-${StackEnvironment}-${EKSClusterName}'
+      Version: !Ref EKSClusterVersion
+      RoleArn: !Ref ControlPlaneIamRole
+      EncryptionConfig: !Ref EksCmk
+      KubernetesNetworkConfig:
+        ServiceIpv4Cidr: !Ref ControlPlaneCidr
+      ResourcesVpcConfig:
+        SecurityGroupIds:
+          - !Ref ControlPlaneSecurityGroup
+        SubnetIds:
+          - !Ref PrivateSubnetIds
+      EndpointPrivateAccess: true
+      EndpointPublicAccess: false
+      Logging:
+        ClusterLogging:
+          EnabledTypes:
+            - Type: api
+            - Type: audit
+            - Type: authenticator
+            - Type: controllerManager
+            - Type: scheduler
+
+      Tags:
+        - Key: Ambiente
+          Value: !Ref StackEnvironment
+        - Key: AreaResponsable
+          Value: !Ref AreaResponsable
+        - Key: CentroDeCosto
+          Value: !Ref CentroDeCosto
+        - Key: DuenoDeLaCuenta
+          Value: !Ref DuenoDeLaCuenta
+        - Key: Proyecto
+          Value: !Ref Proyecto
+        - Key: Aplicacion
+          Value: !Ref Aplicacion
+        - Key: ImpactoANegocio
+          Value: !Ref ImpactoANegocio
+
+  EKSFargateProfile:
+    DependsOn: 
+      - EksCluster
+    Type: AWS::EKS::FargateProfile
+    Properties:
+      FargateProfileName: !Ref EksFargateProfileName
+      ClusterName: !GetAtt EksCluster.Name
+      PodExecutionRoleArn: !Ref FargateProfileIamRole
+      Subnets:
+        - !Ref PrivateSubnetIds
+      Selectors:
+        - Namespace: !Ref FargateAppNamespace
+        - Namespace: kube-system
+
+  ControlPlaneLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Join
+        - ''
+        - - '/'
+          - !Select [1, !Split ["-", !Ref AppPrefix]]
+          - !Sub '/${AppPrefix}-${StackEnvironment}-CW-LOGGROUP-CONTROLPLANE'
+      RetentionInDays: 90
+      KmsKeyId: !Ref CmkCloudWatchLogGroupKey
+
+      Tags:
+        - Key: Ambiente
+          Value: !Ref StackEnvironment
+        - Key: AreaResponsable
+          Value: !Ref AreaResponsable
+        - Key: CentroDeCosto
+          Value: !Ref CentroDeCosto
+        - Key: DuenoDeLaCuenta
+          Value: !Ref DuenoDeLaCuenta
+        - Key: Proyecto
+          Value: !Ref Proyecto
+        - Key: Aplicacion
+          Value: !Ref Aplicacion
+        - Key: ImpactoANegocio
+          Value: !Ref ImpactoANegocio
+
+  OidcProvider:
+    Type: AWS::IAM::OIDCProvider
+    DependsOn:
+      - EksCluster
+    Properties: 
+      Url: !GetAtt EksCluster.OpenIdConnectIssuerUrl
+      ThumbprintList: 
+        - 9e99a48a9960b14926bb7f3b02e22da2b0ab7280
+      ClientIdList:
+        - sts.amazonaws.com
+
+Outputs:
+
+  AmxControlPlaneName:
+    Description: 'EKS Control Plane'
+    Value: !GetAtt EksCluster.Name
+
+  AmxControlPlaneOpenIdConnectIssuerUrl:
+    Description: 'EKS Control Plane Issue URL'
+    Value: !Select [1, !Split ["https://", !GetAtt EksCluster.OpenIdConnectIssuerUrl]]
+
+  AmxControlPlaneEndpoint:
+    Description: 'EKS Control Plane Endpoint'
+    Value: !GetAtt EksCluster.Endpoint
+
+  

@@ -1,0 +1,12 @@
+version: 0.2
+
+phases:
+  build:
+    commands:
+      - echo "Copying stack templates to S3"
+      - |
+        aws s3 sync . "s3://$TEMPLATE_BUCKET" --exclude 'buildspec-*.yaml' --exclude 'readme.md' --exclude 'AMX-CA-CF-ROOT-STACK.*' --delete
+
+artifacts:
+  files:
+    - '**/*'
