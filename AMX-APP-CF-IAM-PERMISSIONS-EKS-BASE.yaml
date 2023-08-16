@@ -7,10 +7,6 @@ Parameters:
   StackEnvironment:
     Type: String
     Description: 'Clave del ambiente donde se esta haciendo el despliegue en mayusculas (DE, Q, PD)'
-    AllowedValues:
-      - "PD"
-      - "Q"
-      - "DE"
 
   AppPrefix:
     Type: String
@@ -32,14 +28,6 @@ Parameters:
     Type: String
     Description: Area responsable
     Default: ''
-    AllowedValues:
-      - "SolucionesCorporativas"
-      - "Comercial"
-      - "Operaciones"
-      - "CXLYL"
-      - "Infraestrcutura"
-      - "Seguridad"
-      - "BI"
 
   CentroDeCosto:
     Type: String
@@ -65,12 +53,6 @@ Parameters:
     Type: String
     Description: Impacto de negocio
     Default: ""
-    AllowedValues:
-      - "Tier0"
-      - "Tier1"
-      - "Tier2"
-      - "Tier3"
-      - "Tier4"
 
 Resources:
 
