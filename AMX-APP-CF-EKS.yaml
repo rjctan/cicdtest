@@ -160,7 +160,8 @@ Resources:
       Name: !Sub '${AppPrefix}-${StackEnvironment}-${EKSClusterName}'
       Version: !Ref EKSClusterVersion
       RoleArn: !Ref ControlPlaneIamRole
-      EncryptionConfig: !Ref EksCmk
+      EncryptionConfig: 
+        - !Ref EksCmk
       KubernetesNetworkConfig:
         ServiceIpv4Cidr: !Ref ControlPlaneCidr
       ResourcesVpcConfig:
@@ -169,8 +170,8 @@ Resources:
         SubnetIds:
           - !Ref PrivateSubnetId1
           - !Ref PrivateSubnetId2
-      EndpointPrivateAccess: true
-      EndpointPublicAccess: false
+        EndpointPrivateAccess: true
+        EndpointPublicAccess: false
       Logging:
         ClusterLogging:
           EnabledTypes:
