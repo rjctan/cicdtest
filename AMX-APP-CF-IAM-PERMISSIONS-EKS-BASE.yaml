@@ -206,4 +206,8 @@ Outputs:
   AmxFargateIamRoleArn: 
     Description: ARN of Fargate Role
     Value: !GetAtt FargateExecutionRole.Arn
+
+  AmxFargateIamRoleName: 
+    Description: ARN of Fargate Role
+    Value: !Ref FargateExecutionRole
     

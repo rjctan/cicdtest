@@ -179,7 +179,7 @@ Resources:
         AppPrefix: !Ref AppPrefix
         ClusterOIDCURL: !GetAtt   EksClusterStack.Outputs.AmxControlPlaneOpenIdConnectIssuerUrl
         AwsLoadBalancerIamRole: !Ref AwsLoadBalancerIamRole
-        FargateIamRole: !GetAtt IamBaseStack.Outputs.AmxFargateIamRoleArn
+        FargateIamRole: !GetAtt IamBaseStack.Outputs.AmxFargateIamRoleName
         AwsCloudwatchIamPolicy: !Ref AwsCloudwatchIamPolicy
         AreaResponsable: !Ref AreaResponsable
         CentroDeCosto: !Ref CentroDeCosto
