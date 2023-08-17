@@ -163,7 +163,7 @@ Resources:
       EncryptionConfig:
         - Provider:
             KeyArn:
-              !Ref: EksCMK
+              !Ref EksCmk
           Resources:
           - secrets
       KubernetesNetworkConfig:
