@@ -162,8 +162,8 @@ Resources:
       RoleArn: !Ref ControlPlaneIamRole
       EncryptionConfig:
         - Provider:
-            KeyArn: 
-              !Ref EksCMK
+            KeyArn:
+              !Ref: EksCMK
           Resources:
           - secrets
       KubernetesNetworkConfig:
