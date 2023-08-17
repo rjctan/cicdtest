@@ -60,7 +60,7 @@ Resources:
     Type: AWS::IAM::ManagedPolicy
     Properties:
       Description: Política que permite la escritura de logs desde el aplicativo alojado en eks
-      ManagedPolicyName: !Sub ${AppPrefix}-${StackEnvironment}-CW-LOGS'
+      ManagedPolicyName: !Sub '${AppPrefix}-${StackEnvironment}-CW-LOGS'
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -82,7 +82,7 @@ Resources:
     Type: AWS::IAM::ManagedPolicy
     Properties:
       Description: Política que permite la lectura y escritura de archivos desde el aplicativo alojado en eks a buckets de s3
-      ManagedPolicyName: !Sub ${AppPrefix}-${StackEnvironment}-S3-READ-WRITE'
+      ManagedPolicyName: !Sub '${AppPrefix}-${StackEnvironment}-S3-READ-WRITE'
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -102,7 +102,7 @@ Resources:
     Type: AWS::IAM::ManagedPolicy
     Properties:
       Description: Política que permite la lectura de secretos y uso de kms desde el aplicativo alojado en eks
-      ManagedPolicyName: !Sub ${AppPrefix}-${StackEnvironment}-SSM-KMS-READ'
+      ManagedPolicyName: !Sub '${AppPrefix}-${StackEnvironment}-SSM-KMS-READ'
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -141,9 +141,9 @@ Resources:
                 - eks.amazonaws.com
             Action: 'sts:AssumeRole'
       ManagedPolicyArns:
- #       - !Ref CloudWatchWriteAccess
- #       - !Ref S3ReadWriteAccess
- #       - !Ref SsmKmsReadAccess
+        - !Ref CloudWatchWriteAccess
+        - !Ref S3ReadWriteAccess
+        - !Ref SsmKmsReadAccess
         - arn:aws:iam::aws:policy/AmazonEKSClusterPolicy
         - arn:aws:iam::aws:policy/AmazonEKSServicePolicy
       Path: '/'
