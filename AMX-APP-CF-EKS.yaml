@@ -215,6 +215,7 @@ Resources:
       Selectors:
         - Namespace: !Ref FargateAppNamespace
         - Namespace: kube-system
+        - Namespace: fargate-container-insights
 
   ControlPlaneLogGroup:
     Type: AWS::Logs::LogGroup
