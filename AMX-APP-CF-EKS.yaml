@@ -161,7 +161,9 @@ Resources:
       Version: !Ref EKSClusterVersion
       RoleArn: !Ref ControlPlaneIamRole
       EncryptionConfig:
-        - Resources: 
+        - Provider:
+            KeyArn: !Ref EksCmk
+          Resources:
           - secrets
       KubernetesNetworkConfig:
         ServiceIpv4Cidr: !Ref ControlPlaneCidr
