@@ -10,7 +10,7 @@ Parameters:
   AppPrefix:
     Type: String
     Description: 'Prefijo del aplicativo de acuerdo a la nomenclatura de AMX en letras mayusculas (ej. AMX-APP)'
-    Default: 'AMX-APP'
+    Default: ''
 
   EKSClusterName:
     Type: String
@@ -52,9 +52,14 @@ Parameters:
     Description: Control Plane Cidr
     Default: ''
 
-  PrivateSubnetIds:
-    Type: List<AWS::EC2::Subnet::Id>
-    Description: Define the Private Subnet IDs
+  PrivateSubnetId1:
+    Type: String
+    Description: Define the Private Subnet Id1
+    Default: ''
+
+  PrivateSubnetId2:
+    Type: String
+    Description: Define the Private Subnet Id2
     Default: ''
 
   FargateProfileIamRole:
@@ -162,7 +167,8 @@ Resources:
         SecurityGroupIds:
           - !Ref ControlPlaneSecurityGroup
         SubnetIds:
-          - !Ref PrivateSubnetIds
+          - !Ref PrivateSubnetId1
+          - !Ref PrivateSubnetId2
       EndpointPrivateAccess: true
       EndpointPublicAccess: false
       Logging:

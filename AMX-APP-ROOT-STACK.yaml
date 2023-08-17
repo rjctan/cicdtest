@@ -11,11 +11,7 @@ Parameters:
   StackEnvironment:
     Type: String
     Description: 'Clave del ambiente donde se esta haciendo el despliegue en mayusculas (DE, Q, PD)'
-    AllowedValues:
-      - "PD"
-      - "Q"
-      - "DE"
-
+    
   AppPrefix:
     Type: String
     Description: 'Prefijo del aplicativo de acuerdo a la nomenclatura de AMX en letras mayusculas (ej. AMX-APP)'
@@ -66,9 +62,14 @@ Parameters:
     Description: Control Plane Cidr
     Default: ''
 
-  PrivateSubnetIds:
-    Type: List<AWS::EC2::Subnet::Id>
-    Description: Define the Private Subnet IDs
+  PrivateSubnetId1:
+    Type: String
+    Description: Define the Private Subnet Id1
+    Default: ''
+
+  PrivateSubnetId2:
+    Type: String
+    Description: Define the Private Subnet Id2
     Default: ''
  
   FargateAppNamespace:
@@ -155,7 +156,8 @@ Resources:
         EksVpcId: !Ref EksVpcId
         VpcCidr: !Ref VpcCidr
         ControlPlaneCidr: !Ref ControlPlaneCidr
-        PrivateSubnetIds: !Ref PrivateSubnetIds
+        PrivateSubnetId1: !Ref PrivateSubnetId1
+        PrivateSubnetId2: !Ref PrivateSubnetId2
         ControlPlaneIamRole: !GetAtt IamBaseStack.Outputs.AmxEksIamRoleArn
         FargateProfileIamRole: !GetAtt IamBaseStack.Outputs.AmxFargateIamRoleArn
         FargateAppNamespace: !Ref FargateAppNamespace
