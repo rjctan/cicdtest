@@ -205,7 +205,8 @@ Resources:
       ClusterName: !GetAtt EksCluster.Name
       PodExecutionRoleArn: !Ref FargateProfileIamRole
       Subnets:
-        - !Ref PrivateSubnetIds
+        - !Ref PrivateSubnetId1
+        - !Ref PrivateSubnetId2
       Selectors:
         - Namespace: !Ref FargateAppNamespace
         - Namespace: kube-system
