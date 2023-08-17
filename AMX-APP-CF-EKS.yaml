@@ -164,7 +164,7 @@ Resources:
         - Provider:
             KeyArn: !Ref EksCmk
           Resources: 
-          - Secrets
+          - secrets
       KubernetesNetworkConfig:
         ServiceIpv4Cidr: !Ref ControlPlaneCidr
       ResourcesVpcConfig:
