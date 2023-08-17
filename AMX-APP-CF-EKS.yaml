@@ -160,7 +160,11 @@ Resources:
       Name: !Sub '${AppPrefix}-${StackEnvironment}-${EKSClusterName}'
       Version: !Ref EKSClusterVersion
       RoleArn: !Ref ControlPlaneIamRole
-      EncryptionConfig: !Sub '[{"resources":["secrets"],"provider":{"keyArn":"alias/tf-state-key"}}]'
+      EncryptionConfig:
+        - Provider:
+            KeyArn: !Ref EksCmk
+          Resources: 
+          - Secrets
       KubernetesNetworkConfig:
         ServiceIpv4Cidr: !Ref ControlPlaneCidr
       ResourcesVpcConfig:
