@@ -207,7 +207,7 @@ Resources:
     Type: AWS::EKS::FargateProfile
     Properties:
       FargateProfileName: !Ref EksFargateProfileName
-      ClusterName: !GetAtt EksCluster.Name
+      ClusterName: !Ref EksCluster
       PodExecutionRoleArn: !Ref FargateProfileIamRole
       Subnets:
         - !Ref PrivateSubnetId1
@@ -258,7 +258,7 @@ Outputs:
 
   AmxControlPlaneName:
     Description: 'EKS Control Plane'
-    Value: !GetAtt EksCluster.Name
+    Value: !Ref EksCluster
 
   AmxControlPlaneOpenIdConnectIssuerUrl:
     Description: 'EKS Control Plane Issue URL'
