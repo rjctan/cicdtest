@@ -14,67 +14,47 @@ Parameters:
 
   EKSClusterName:
     Type: String
-    Description: Name of EKS Cluster
+    Description: Nombre de EKS Cluster
     Default: ''
 
   EKSClusterVersion:
     Type: String
-    Description: Version of EKS Cluster
+    Description: Version de EKS Cluster
     Default: ''
 
   EksCmk:
     Type: String
-    Description: ARN EKS CMK Key
-    Default: ''
-
-  CmkCloudWatchLogGroupKey:
-    Type: String
-    Description: ARN KMS Key for CloudWatch Log Group
+    Description: ARN de Llave EKS
     Default: ''
 
   ControlPlaneIamRole:
     Type: String
-    Description: EKS Control Plane IAM role
+    Description: Rol de EKS - Control Plane
     Default: ''
 
   EksVpcId:
     Type: String
-    Description: VPC Id for EKS Cluster
+    Description: VPC Id para EKS Cluster
     Default: ''
 
   VpcCidr:
     Type: String
-    Description: VPC Cidr
+    Description: Cidr de VPC
     Default: ''
 
   ControlPlaneCidr:
     Type: String
-    Description: Control Plane Cidr
+    Description: Cidr de Control Plane
     Default: ''
 
   PrivateSubnetId1:
     Type: String
-    Description: Define the Private Subnet Id1
+    Description: Id de subred privada 1
     Default: ''
 
   PrivateSubnetId2:
     Type: String
-    Description: Define the Private Subnet Id2
-    Default: ''
-
-  FargateProfileIamRole:
-    Type: String
-    Description: Fargate IAM Role
-    Default: ''
-
-  FargateAppNamespace:
-    Type: String
-    Description: Namespace of App
-    Default: ''
-
-  EksFargateProfileName:
-    Type: String
-    Description: Namespace of Fargate Profile
+    Description: Id de subred privada 2
     Default: ''
   
   # Tags
@@ -199,34 +179,19 @@ Resources:
         - Key: Aplicacion
           Value: !Ref Aplicacion
         - Key: ImpactoANegocio
-          Value: !Ref ImpactoANegocio
+          Value: !Ref 
+          
 
-  EKSFargateProfile:
-    DependsOn: 
+  OidcProvider:
+    Type: AWS::IAM::OIDCProvider
+    DependsOn:
       - EksCluster
-    Type: AWS::EKS::FargateProfile
-    Properties:
-      FargateProfileName: !Ref EksFargateProfileName
-      ClusterName: !Ref EksCluster
-      PodExecutionRoleArn: !Ref FargateProfileIamRole
-      Subnets:
-        - !Ref PrivateSubnetId1
-        - !Ref PrivateSubnetId2
-      Selectors:
-        - Namespace: !Ref FargateAppNamespace
-        - Namespace: kube-system
-        - Namespace: fargate-container-insights
-
-  ControlPlaneLogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      LogGroupName: !Join
-        - ''
-        - - '/'
-          - !Select [1, !Split ["-", !Ref AppPrefix]]
-          - !Sub '/${AppPrefix}-${StackEnvironment}-CW-LOGGROUP-CONTROLPLANE'
-      RetentionInDays: 90
-      KmsKeyId: !Ref CmkCloudWatchLogGroupKey
+    Properties: 
+      Url: !GetAtt EksCluster.OpenIdConnectIssuerUrl
+      ThumbprintList: 
+        - 9e99a48a9960b14926bb7f3b02e22da2b0ab7280
+      ClientIdList:
+        - sts.amazonaws.com
 
       Tags:
         - Key: Ambiente
@@ -244,29 +209,24 @@ Resources:
         - Key: ImpactoANegocio
           Value: !Ref ImpactoANegocio
 
-  OidcProvider:
-    Type: AWS::IAM::OIDCProvider
-    DependsOn:
-      - EksCluster
-    Properties: 
-      Url: !GetAtt EksCluster.OpenIdConnectIssuerUrl
-      ThumbprintList: 
-        - 9e99a48a9960b14926bb7f3b02e22da2b0ab7280
-      ClientIdList:
-        - sts.amazonaws.com
-
 Outputs:
 
   AmxControlPlaneName:
     Description: 'EKS Control Plane'
     Value: !Ref EksCluster
+    Export:
+      Name: amx-app-eks-name
 
   AmxControlPlaneOpenIdConnectIssuerUrl:
     Description: 'EKS Control Plane Issue URL'
     Value: !Select [1, !Split ["https://", !GetAtt EksCluster.OpenIdConnectIssuerUrl]]
+    Export:
+      Name: amx-app-eks-url
 
   AmxControlPlaneEndpoint:
     Description: 'EKS Control Plane Endpoint'
     Value: !GetAtt EksCluster.Endpoint
+    Export:
+      Name: amx-app-eks-endpoint
 
   

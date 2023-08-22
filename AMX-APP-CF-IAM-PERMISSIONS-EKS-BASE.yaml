@@ -17,11 +17,6 @@ Parameters:
     Type: String
     Description: 'Sufijo de rol de EKS de acuerdo a la nomenclatura de AMX en letras mayusculas (ej. EKS-PERMISSIONS)'
     Default: ''
-
-  FargateExecutionRoleName:
-    Type: String
-    Description: 'Sufijo de rol de Fargate de acuerdo a la nomenclatura de AMX en letras mayusculas (ej. FARGATE-PERMISSIONS)'
-    Default: ''
     
   # Tags
   AreaResponsable:
@@ -164,50 +159,12 @@ Resources:
         - Key: ImpactoANegocio
           Value: !Ref ImpactoANegocio
 
-  FargateExecutionRole:
-    Type: AWS::IAM::Role
-    Properties:
-      RoleName: !Sub '${AppPrefix}-${StackEnvironment}-${FargateExecutionRoleName}'
-      AssumeRolePolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-        - Effect: Allow
-          Principal:
-            Service:
-            - eks-fargate-pods.amazonaws.com
-          Action: sts:AssumeRole
-      ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy
-      Path: '/'
-
-      Tags:
-        - Key: Ambiente
-          Value: !Ref StackEnvironment
-        - Key: AreaResponsable
-          Value: !Ref AreaResponsable
-        - Key: CentroDeCosto
-          Value: !Ref CentroDeCosto
-        - Key: DuenoDeLaCuenta
-          Value: !Ref DuenoDeLaCuenta
-        - Key: Proyecto
-          Value: !Ref Proyecto
-        - Key: Aplicacion
-          Value: !Ref Aplicacion
-        - Key: ImpactoANegocio
-          Value: !Ref ImpactoANegocio
-
 
 Outputs:
 
   AmxEksIamRoleArn: 
     Description: ARN of EKS Role
     Value: !GetAtt EksIamRole.Arn
-
-  AmxFargateIamRoleArn: 
-    Description: ARN of Fargate Role
-    Value: !GetAtt FargateExecutionRole.Arn
-
-  AmxFargateIamRoleName: 
-    Description: ARN of Fargate Role
-    Value: !Ref FargateExecutionRole
+    Export:
+      Name: amx-app-eks-arn
     
