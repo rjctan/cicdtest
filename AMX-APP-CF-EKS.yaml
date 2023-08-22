@@ -61,7 +61,7 @@ Parameters:
   AreaResponsable:
     Type: String
     Description: Area responsable
-    Default: Operaciones
+    Default: ""
 
   CentroDeCosto:
     Type: String
@@ -179,7 +179,7 @@ Resources:
         - Key: Aplicacion
           Value: !Ref Aplicacion
         - Key: ImpactoANegocio
-          Value: !Ref 
+          Value: !Ref ImpactoANegocio
           
 
   OidcProvider:
