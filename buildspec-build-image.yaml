@@ -46,5 +46,5 @@ phases:
       - git commit -m "Archivo con el nombre de imagen ${AMX_APP_NAME} - ${TAG}"
       - git push origin "https://${CD_GIT_USER}:${CD_GIT_TOKEN}@github.com/${CD_REPO_NAME}.git" ${CD_BRANCH_NAME}
   artifacts:
-  files: 
-    - image_definition.json
+    files: 
+      - image_definition.json
