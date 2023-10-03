@@ -1,0 +1,50 @@
+version: 0.2
+phases:
+  install:
+    commands:
+      - echo "[INFO] Instalacion de dependencias"
+      - sudo apt update && sudo apt install -y jq unzip curl wget docker git
+      - echo "[INFO] Instalacion de herramienta aws-cli"
+      - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+      - unzip -q awscliv2.zip && sudo ./aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --update
+  pre_build:
+    commands:
+      - env
+      - export COMMIT_ID=${COMMIT_HASH_APP}
+      - export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output=text)
+      - TAG="${TAG_PREFIX}_${COMMIT_ID}"
+      - echo "Logueo a Amazon ECR"
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REPO_URI
+  build:
+    commands:
+      - cd $CODEBUILD_SRC_DIR_SourceCIArtifact/
+      - DOCKERFILE_DIR=$(find . -name Dockerfile)
+      - DOCKERFILE_DIR=$(dirname ${DOCKERFILE_DIR})
+      - |
+        if [ "${DOCKERFILE_DIR}" == "" ]
+        then
+          echo "ERROR: Dockerfile not found!"
+          exit 1
+        else
+          echo "DOCKERFILE_DIR=${DOCKERFILE_DIR}"
+        fi
+      - sudo docker build -t $AMX_APP_NAME-image-build -f ${DOCKERFILE_DIR}/Dockerfile . 
+      - IMAGE_ID=$(sudo docker image ls | grep $AMX_APP_NAME-image-build | awk '{print $3}')
+      - sudo docker tag $IMAGE_ID $ECR_REPO_URI:$TAG
+  post_build:
+    commands:
+      - sudo docker push $ECR_REPO_URI:$TAG
+      - echo "Creando archivo de imagen en formato JSON"
+      - printf '[{"name":"%s","imageUri":"%s"}]' $DEPLOYMENT_MANIFEST $IMAGE_ID > image_definition.json
+      - git config --global credential.UseHttpPath true
+      - git clone "https://${CD_GIT_USER}:${CD_GIT_TOKEN}@github.com/${CD_REPO_NAME}.git"
+      - CD_PROYECTO=$(PROYECTO="${CD_REPO_NAME}" | echo ${PROYECTO##*/})
+      - cd ${CD_PROYECTO}
+      - git checkout ${CD_BRANCH_NAME}
+      - git checkout -b ${TAG}
+      - git add image_definition.json
+      - git commit -m "Archivo con el nombre de imagen ${AMX_APP_NAME} - ${TAG}"
+      - git push origin "https://${CD_GIT_USER}:${CD_GIT_TOKEN}@github.com/${CD_REPO_NAME}.git" ${CD_BRANCH_NAME}
+  artifacts:
+  files: 
+    - image_definition.json
