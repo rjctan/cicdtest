@@ -48,7 +48,8 @@ phases:
       - cp -vf ../image_definition.json .
       - git add image_definition.json
       - git commit -m "Archivo con el nombre de imagen ${AMX_APP_NAME} - ${TAG}"
-      - git push origin "https://${CD_GIT_USER}:${CD_GIT_TOKEN}@github.com/${CD_REPO_NAME}.git" ${CD_BRANCH_NAME}
+      - #git push origin "https://${CD_GIT_USER}:${CD_GIT_TOKEN}@github.com/${CD_REPO_NAME}.git" ${CD_BRANCH_NAME}
+      - git push origin "${CD_BRANCH_NAME}"
 artifacts:
   files: 
     - image_definition.json
