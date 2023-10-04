@@ -4,7 +4,7 @@ phases:
     commands:
       - echo "[INFO] Instalacion de dependencias"
       - #sudo apt update && sudo apt install -y jq unzip curl wget docker git
-      - sudo yum install -y -q jq unzip curl wget docker git
+      - sudo yum install -y -q unzip curl docker git
       - echo "[INFO] Instalacion de herramienta aws-cli"
       - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
       - unzip -q awscliv2.zip && sudo ./aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --update
