@@ -14,7 +14,8 @@ phases:
       - export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output=text)
       - TAG="${TAG_PREFIX}_${COMMIT_ID}"
       - echo "Logueo a Amazon ECR"
-      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REPO_URI
+      - ECR_REPO=$(echo "${ECR_REPO_URI}" | awk -F '/' '{print $1}')
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REPO
   build:
     commands:
       - cd $CODEBUILD_SRC_DIR_SourceCIArtifact/
