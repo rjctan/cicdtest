@@ -3,7 +3,8 @@ phases:
   install:
     commands:
       - echo "[INFO] Instalacion de dependencias"
-      - sudo apt update && sudo apt install -y jq unzip curl wget docker git
+      - #sudo apt update && sudo apt install -y jq unzip curl wget docker git
+      - sudo yum install -y -q jq unzip curl wget docker git
       - echo "[INFO] Instalacion de herramienta aws-cli"
       - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
       - unzip -q awscliv2.zip && sudo ./aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --update
@@ -29,9 +30,9 @@ phases:
         else
           echo "DOCKERFILE_DIR=${DOCKERFILE_DIR}"
         fi
-      - docker build -t $AMX_APP_NAME-image-build -f ${DOCKERFILE_DIR}/Dockerfile . 
+      - sudo docker build -t $AMX_APP_NAME-image-build -f ${DOCKERFILE_DIR}/Dockerfile . 
       - IMAGE_ID=$(sudo docker image ls | grep $AMX_APP_NAME-image-build | awk '{print $3}')
-      - docker tag $IMAGE_ID $ECR_REPO_URI:$TAG
+      - sudo docker tag $IMAGE_ID $ECR_REPO_URI:$TAG
   post_build:
     commands:
       - sudo docker push $ECR_REPO_URI:$TAG
