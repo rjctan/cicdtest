@@ -2,34 +2,21 @@ version: 0.2
 phases:
   install:
     commands:
+      - cd /tmp/
       - env
-      - cd $CODEBUILD_SRC_DIR_SourceAppArtifact/
-      - echo install NPM dependecies
-      - ls -l
-      - cd $APP_NAME/
-      - ls -l
-      - npm install
-      - npm install -g @angular/cli
       - wget https://github.com/fw10/veracode-javascript-packager/releases/latest/download/veracode-js-packager-linux-amd64 -O /tmp/veracode-js-packager
       - chmod 755 /tmp/veracode-js-packager
   pre_build:
     commands:
-      - echo review the versions
-      - node -v
-      - npm -v
+      - ls -l /tmp/
   build:
     commands:
-      - echo build process started now
-      - ng build
-  post_build:
-    commands:
-      - echo build process finished, proceed with vulnerability scanning
-      - cd $CODEBUILD_SRC_DIR_SourceAppArtifact
-      - /tmp/veracode-js-packager -source ${APP_NAME} -target /tmp/
+      - /tmp/veracode-js-packager -source $CODEBUILD_SRC_DIR_AppSourceOutput -target /tmp/
+      - ls -l /tmp/
       - VC_OUTPUT=$(ls /tmp/vc-output*)
       - echo $VC_OUTPUT
       - |
-        if [ "${EXECUTE_SECURITY_SCAN}" == "ON" ]
+        if [ "${EXECUTE_SECURITY_SCAN}" = "ON" ]
         then
           curl https://repo1.maven.org/maven2/com/veracode/vosp/api/wrappers/vosp-api-wrappers-java/23.4.11.2/vosp-api-wrappers-java-23.4.11.2-dist.zip --output /tmp/VeracodeJavaAPI.zip
           unzip /tmp/VeracodeJavaAPI.zip -d /tmp/VeracodeJavaAPI
