@@ -15,6 +15,7 @@ phases:
       - TAG="${TAG_PREFIX}_${COMMIT_ID}"
       - echo "Logueo a Amazon ECR"
       - ECR_REPO=$(echo "${ECR_REPO_URI}" | awk -F '/' '{print $1}')
+      - sudo usermod -aG docker ${USER}
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin "${ECR_REPO}"
   build:
     commands:
