@@ -37,6 +37,8 @@ phases:
       - sudo docker push $ECR_REPO_URI:$TAG
       - echo "Creando archivo de imagen en formato JSON"
       - printf '[{"name":"%s","imageUri":"%s"}]' $DEPLOYMENT_MANIFEST $IMAGE_ID > image_definition.json
+      - git config --global user.name "${CD_GIT_USER}"
+      - git config --global user.email "${CD_GIT_EMAIL}"
       - git config --global credential.UseHttpPath true
       - git clone "https://${CD_GIT_USER}:${CD_GIT_TOKEN}@github.com/${CD_REPO_NAME}.git"
       - CD_PROYECTO=$(echo "${CD_REPO_NAME}" | awk -F '/' '{print $2}' | sed 's|.git||')
