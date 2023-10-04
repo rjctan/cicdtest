@@ -40,6 +40,8 @@ phases:
       - git config --global credential.UseHttpPath true
       - git clone "https://${CD_GIT_USER}:${CD_GIT_TOKEN}@github.com/${CD_REPO_NAME}.git"
       - CD_PROYECTO=$(PROYECTO="${CD_REPO_NAME}" | echo ${PROYECTO##*/})
+      - echo ${CD_PROYECTO}
+      - echo ${CD_BRANCH_NAME}
       - cd ${CD_PROYECTO}
       - git checkout ${CD_BRANCH_NAME}
       - git checkout -b ${TAG}
