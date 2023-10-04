@@ -15,6 +15,7 @@ phases:
       - TAG="${TAG_PREFIX}_${COMMIT_ID}"
       - echo "Logueo a Amazon ECR"
       - ECR_REPO=$(echo "${ECR_REPO_URI}" | awk -F '/' '{print $1}')
+      - sudo systemctl start docker  
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin "${ECR_REPO}"
   build:
     commands:
@@ -23,7 +24,7 @@ phases:
       - DOCKERFILE_DIR=$(find . -name Dockerfile)
       - DOCKERFILE_DIR=$(dirname ${DOCKERFILE_DIR})
       - |
-        if [ "${DOCKERFILE_DIR}" == "" ]
+        if [ "${DOCKERFILE_DIR}" = "" ]
         then
           echo "ERROR: Dockerfile not found!"
           exit 1
