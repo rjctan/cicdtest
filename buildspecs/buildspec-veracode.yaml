@@ -7,8 +7,8 @@ env:
     VERACODE_APPNAME: "demo"
     VERACODE_SANDBOXNAME: "demo"
   secrets-manager:
-    VID: "AMX-APP-DE-SM-VERACODE-CREDENTIALS:vidSecret"
-    VKEY: "AMX-APP-DE-SM-VERACODE-CREDENTIALS:vkeySecret"
+    VID: "AMX-APP-DE-SM-VERACODE-CREDENTIALS:VID"
+    VKEY: "AMX-APP-DE-SM-VERACODE-CREDENTIALS:VKEY"
 phases:
   install:
     commands:
