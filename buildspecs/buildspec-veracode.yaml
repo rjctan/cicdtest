@@ -2,7 +2,6 @@ version: 0.2
 env:
   shell: bash
   variables:
-    APP_NAME: "amx-app"
     EXECUTE_SECURITY_SCAN: "OFF"
     VERACODE_APPNAME: "demo"
     VERACODE_SANDBOXNAME: "demo"
