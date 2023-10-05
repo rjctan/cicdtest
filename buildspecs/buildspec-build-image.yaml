@@ -2,7 +2,7 @@ version: 0.2
 env:
   shell: bash
   variables:
-    APP_NAME: "amx-app"
+    AMX_APP_NAME: "amx-app"
     TAG_PREFIX: "dev"
     CD_REPO_NAME: "guillermo-gutierrez/BE_K8S"
     CD_BRANCH_NAME: "develop"
