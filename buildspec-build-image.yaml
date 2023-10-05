@@ -1,4 +1,16 @@
 version: 0.2
+env:
+  shell: bash
+  variables:
+    APP_NAME: "amx-app"
+    TAG_PREFIX: "dev"
+    CD_REPO_NAME: "guillermo-gutierrez/BE_K8S"
+    CD_BRANCH_NAME: "develop"
+    ECR_REPO_NAME: "amx-app-de-ecr-demo"
+  secrets-manager:
+    CD_GIT_USER: "AMX-APP-DE-SM-GITHUB-CREDENTIALS:gituser"
+    CD_GIT_EMAIL: "AMX-APP-DE-SM-GITHUB-CREDENTIALS:gitemail"
+    CD_GIT_TOKEN: "AMX-APP-DE-SM-GITHUB-CREDENTIALS:gittoken"
 phases:
   install:
     commands:
@@ -10,8 +22,9 @@ phases:
   pre_build:
     commands:
       - env
-      - export COMMIT_ID=${COMMIT_HASH_APP}
       - export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output=text)
+      - export ECR_REPO_URI="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${ECR_REPO_NAME}"
+      - export COMMIT_ID=${COMMIT_HASH_APP}
       - TAG="${TAG_PREFIX}_${COMMIT_ID}"
       - echo "Logueo a Amazon ECR"
       - ECR_REPO=$(echo "${ECR_REPO_URI}" | awk -F '/' '{print $1}')
@@ -36,7 +49,7 @@ phases:
     commands:
       - sudo docker push $ECR_REPO_URI:$TAG
       - echo "Creando archivo de imagen en formato JSON"
-      - printf '[{"name":"%s","imageUri":"%s"}]' $DEPLOYMENT_MANIFEST $ECR_REPO_URI:$TAG > image_definition.json
+      - printf '[{"imageUri":"%s"}]' $ECR_REPO_URI:$TAG > image_definition.json
       - git config --global user.name "${CD_GIT_USER}"
       - git config --global user.email "${CD_GIT_EMAIL}"
       - git config --global credential.UseHttpPath true
@@ -45,11 +58,10 @@ phases:
       - CD_PROYECTO=$(echo "${CD_REPO_NAME}" | awk -F '/' '{print $2}' | sed 's|.git||')
       - cd ${CD_PROYECTO}
       - git checkout "${CD_BRANCH_NAME}"
-      - git checkout -b ${TAG}
       - cp -vf ../image_definition.json .
       - git add image_definition.json
       - git commit -m "Archivo con el nombre de imagen ${AMX_APP_NAME} - ${TAG}"
-      - git push --set-upstream origin "${TAG}"
+      - git push
 artifacts:
   files: 
     - image_definition.json
