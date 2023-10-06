@@ -24,6 +24,7 @@ phases:
       - ls -l /tmp/
       - VC_OUTPUT=$(ls /tmp/vc-output*)
       - echo $VC_OUTPUT
+      - echo "Demo EKS Task 3"
       - |
         if [ "${EXECUTE_SECURITY_SCAN}" = "ON" ]
         then
